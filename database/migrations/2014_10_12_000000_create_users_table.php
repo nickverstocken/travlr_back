@@ -21,6 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->integer('fb_id')->nullable();
             $table->string('fb_token')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->string('time_zone')->nullable();
             $table->boolean('unit_is_km')->default(true);
             $table->boolean('temperature_is_celsius')->default(true);

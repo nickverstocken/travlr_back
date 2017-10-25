@@ -17,16 +17,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'v1'], function(){
+Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function(){
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::post('recover', 'AuthController@recover');
 });
-Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth']], function() {
+Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function() {
     Route::get('logout', 'AuthController@logout');
     Route::resource('trips', 'TripsController');
-    Route::get('test', function(){
-        return response()->json(['foo'=>'bar']);
-    });
 });
 

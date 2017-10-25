@@ -28,6 +28,8 @@ class TripTransformer extends TransformerAbstract
             'creation_time' => $trip->created_at->toDateTimeString(),
             'last_modified' => $trip->updated_at->toDateTimeString(),
             'likes' => $trip->likes,
+            'public' => $trip->public,
+            'user_id' => $trip->user_id
         ];
     }
     public function includeUser(trip $trip)

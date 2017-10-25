@@ -25,6 +25,7 @@ class CreateTripsTable extends Migration
             $table->integer('total_km')->nullable();
             $table->string('cover_photo_path')->default('defaultcover.jpg');
             $table->integer('likes')->default(0);
+            $table->boolean('public')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

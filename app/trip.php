@@ -14,7 +14,8 @@ class trip extends Model
         'start_date',
         'total_km',
         'cover_photo_path',
-        'likes'
+        'likes',
+        'public'
     ];
 
     public function user(){

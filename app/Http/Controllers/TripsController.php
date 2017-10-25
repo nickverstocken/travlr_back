@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Transformers\TripTransformer;
+use App\User;
 use Illuminate\Http\Request;
 use App\trip;
 use App\Http\Transform;
@@ -11,6 +12,7 @@ use Response;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
+use JWTAuth;
 class TripsController extends Controller
 {
     private $_fractal;
@@ -24,7 +26,8 @@ class TripsController extends Controller
     }
 
     public function index(Request $request){
-        $trips = Trip::all();
+        $user = JWTAuth::parseToken()->toUser();
+        $trips = Trip::all()->where('user_id', $user->id);
         $trips = new Collection($trips, $this->_triptransformer);
         $this->_fractal->parseIncludes($request->get('include', ''));
         $trips = $this->_fractal->createData($trips);
@@ -33,6 +36,7 @@ class TripsController extends Controller
         , 200);
     }
     public function show($id, Request $request){
+        $user = JWTAuth::parseToken()->toUser();
         $trip = Trip::find($id);
         if(!$trip){
             return Response::json([
@@ -45,14 +49,18 @@ class TripsController extends Controller
             $trip = new Item($trip, $this->_triptransformer);
             $this->_fractal->parseIncludes($request->get('include', ''));
             $trip = $this->_fractal->createData($trip);
+            $trip = $trip->toArray();
         }
-
-        $trip2 = Trip::with(['user', 'stops' => function($q){
-            $q->with('media');
-        }])->select('*')->find($id);
-
-        return Response::json(
-            $trip->toArray()
-        , 200);
+        if ($trip['user_id'] == $user['id']) {
+            return Response::json([
+                'trip' => $trip
+            ], 200);
+        }else{
+            return Response::json([
+                'error' => [
+                    'message' => "You don't have the rights to view this trip"
+                ]
+            ], 403);
+        }
     }
 }

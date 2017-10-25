@@ -24,6 +24,8 @@ class User extends Authenticatable
         'fb_id',
         'fb_token',
         'time_zone',
+        'country',
+        'city',
         'unit_is_km',
         'temperature_is_celsius',
         'profile_image',

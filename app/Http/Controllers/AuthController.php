@@ -26,6 +26,8 @@ class AuthController extends Controller
             'name',
             'email',
             'password',
+            'city',
+            'country',
             'password_confirmation'
         );
         $validator = Validator::make($input, $rules);
@@ -37,7 +39,22 @@ class AuthController extends Controller
         $name = $request->name;
         $email = $request->email;
         $password = $request->password;
-        $user = User::create(['first_name' => $first_name, 'name' => $name, 'email' => $email, 'password' => Hash::make($password)]);
+        if(!empty($request->time_zone)){
+            $time_zone = $request->time_zone;
+        }else{
+            $time_zone = null;
+        }
+        if(!empty($request->city)){
+        $city = $request->city;
+        }else{
+            $city = null;
+        }
+        if(!empty($request->country)){
+            $country = $request->country;
+        }else{
+            $country = null;
+        }
+        $user = User::create(['first_name' => $first_name, 'name' => $name, 'email' => $email, 'city' => $city, 'country'=> $country, 'time_zone'=> $time_zone, 'password' => Hash::make($password)]);
         $verification_code = str_random(30); //Generate verification code
         DB::table('user_verifications')->insert(['user_id' => $user->id, 'token' => $verification_code]);
         $subject = "Please verify your email address.";

@@ -23,6 +23,8 @@ class UserTransformer extends TransformerAbstract
             'email' => $user->email,
             'fb_id' => $user->fb_id,
             'fb_token' => $user->fb_token,
+            'city' => $user->city,
+            'country' => $user->country,
             'time_zone' => $user->time_zone,
             'profile_image' => $user->profile_image,
             'profile_image_thumb' => $user->profile_image,
