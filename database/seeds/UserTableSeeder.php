@@ -21,13 +21,18 @@ class UserTableSeeder extends Seeder
                 'email' => 'verstockennick@gmail.com',
                 'password' => Hash::make('test'),
                 'time_zone' => 'Europe/Brussels',
-                'role' => 'admin'),
+                'role' => 'admin',
+                'is_verified' => true
+            ),
+
             array(
                 'name' => 'Verstocken',
                 'first_name' => 'Bart',
                 'email' => 'verstockenbart@gmail.com',
                 'password' => Hash::make('test'),
-                'time_zone' => 'Europe/Brussels')
+                'time_zone' => 'Europe/Brussels',
+                'is_verified' => true
+            )
         );
         foreach ($users as $user) {
             User::create($user);

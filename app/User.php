@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Tymon\JWTAuth\Contracts\JWTSubject as AuthenticatableUserContract;
 class User extends Authenticatable
 {
     use Notifiable;
@@ -25,7 +26,11 @@ class User extends Authenticatable
         'time_zone',
         'unit_is_km',
         'temperature_is_celsius',
-        'profile_image', 'profile_image_cover', 'profile_image_thumb', 'role'
+        'profile_image',
+        'profile_image_cover',
+        'profile_image_thumb',
+        'role',
+        'is_verified'
     ];
 
     /**

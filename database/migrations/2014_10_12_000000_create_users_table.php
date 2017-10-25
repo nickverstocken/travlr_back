@@ -28,6 +28,7 @@ class CreateUsersTable extends Migration
             $table->string('profile_image_cover')->nullable();
             $table->string('profile_image_thumb')->nullable();
             $table->enum('role',['admin','traveler','demo'])->default('traveler');
+            $table->boolean('is_verified')->default(0);
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
@@ -42,5 +43,8 @@ class CreateUsersTable extends Migration
     public function down()
     {
         Schema::dropIfExists('users');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_verified');
+        });
     }
 }

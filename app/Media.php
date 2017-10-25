@@ -8,6 +8,7 @@ class Media extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+    protected $hidden = ['updated_at', 'created_at', 'deleted_at'];
     protected $fillable = [
         'stop_id',
         'caption',

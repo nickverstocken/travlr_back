@@ -24,7 +24,8 @@ class StopTransformer extends TransformerAbstract
             'views' => $stop->views,
             'likes' => $stop->likes,
             'arrival_time' => $stop->arrival_time,
-            'location' => $stop->location
+            'location' => $stop->location,
+            'media' => $stop->media
         ];
     }
 }

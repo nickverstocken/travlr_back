@@ -18,6 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['prefix' => 'v1'], function(){
+    Route::post('register', 'AuthController@register');
+    Route::post('login', 'AuthController@login');
+    Route::post('recover', 'AuthController@recover');
+});
+Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth']], function() {
+    Route::get('logout', 'AuthController@logout');
     Route::resource('trips', 'TripsController');
+    Route::get('test', function(){
+        return response()->json(['foo'=>'bar']);
+    });
 });
 

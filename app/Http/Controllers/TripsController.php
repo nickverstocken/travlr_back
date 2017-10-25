@@ -17,6 +17,7 @@ class TripsController extends Controller
     private $_triptransformer;
     function __construct(Manager $fractal, TripTransformer $triptransformer)
     {
+
         $this->_fractal = $fractal;
         $this->_fractal->setSerializer(new ArraySerializer());
         $this->_triptransformer = $triptransformer;
@@ -32,15 +33,7 @@ class TripsController extends Controller
         , 200);
     }
     public function show($id, Request $request){
-        $trip = Trip::with(['user', 'stops' => function($q){
-            $q->with('media');
-        }])->select('*')->find($id);
-        $trip = new Item($trip, $this->_triptransformer);
-        $this->_fractal->parseIncludes($request->get('include', ''));
-        $trip = $this->_fractal->createData($trip);
-        $trip2 = Trip::with(['user', 'stops' => function($q){
-            $q->with('media');
-        }])->select('*')->find($id);
+        $trip = Trip::find($id);
         if(!$trip){
             return Response::json([
                 'error' => [
@@ -48,6 +41,16 @@ class TripsController extends Controller
                 ]
             ], 404);
         }
+        if($trip){
+            $trip = new Item($trip, $this->_triptransformer);
+            $this->_fractal->parseIncludes($request->get('include', ''));
+            $trip = $this->_fractal->createData($trip);
+        }
+
+        $trip2 = Trip::with(['user', 'stops' => function($q){
+            $q->with('media');
+        }])->select('*')->find($id);
+
         return Response::json(
             $trip->toArray()
         , 200);
