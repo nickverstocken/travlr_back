@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ImageSave;
 use App\Transformers\TripTransformer;
 use App\User;
 use Illuminate\Http\Request;
@@ -62,5 +63,32 @@ class TripsController extends Controller
                 ]
             ], 403);
         }
+    }
+    public function store(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $trip = new trip();
+        $trip->name = $request->get('name');
+        $trip->start_date = $request->get('start_date');
+        if($request->get('end_date')){
+            $trip->end_date = $request->get('end_date');
+        }
+        $image = $request->file('image_cover');
+        $extension = $image->getClientOriginalExtension();
+        if(!($extension == 'jpg' || $extension == 'png')) {
+            return Response::json([
+                'message' => 'Only upload jpg or png images please'
+            ], 200);
+        }else{
+            $bytes = random_bytes(10);
+            $name = bin2hex($bytes);
+            $save = new ImageSave(500,250,$user->id . '/trips/' . $trip->start_date . '_' . $trip->name . '/coverphoto',$name . '.' . $extension, $image );
+            $trip->cover_photo_path = $save->saveImage();
+        }
+        $trip = $user->trips()->save($trip);
+        return Response::json([
+            'message' => 'Trip Created Succesfully',
+            'trip' => $trip
+        ], 200);
     }
 }

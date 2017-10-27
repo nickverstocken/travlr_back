@@ -24,7 +24,8 @@ class TripsTableSeeder extends Seeder
             array(
                 'user_id' => 1,
                 'name' => 'Australie',
-                'start_date' => '2017-10-12',
+                'start_date' => '2017-09-12',
+                'end_date' => '2017-10-07',
                 'total_km' => 7000
             )
         );

@@ -23,6 +23,7 @@ class TripTransformer extends TransformerAbstract
             'id' => $trip->id,
             'name' => $trip->name,
             'start_date' => $trip->start_date,
+            'end_date'=> $trip->end_date,
             'total_km' => $trip->total_km,
             'cover_photo_path' => $trip->cover_photo_path,
             'creation_time' => $trip->created_at->toDateTimeString(),

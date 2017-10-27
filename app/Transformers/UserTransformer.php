@@ -27,7 +27,7 @@ class UserTransformer extends TransformerAbstract
             'country' => $user->country,
             'time_zone' => $user->time_zone,
             'profile_image' => $user->profile_image,
-            'profile_image_thumb' => $user->profile_image,
+            'profile_image_thumb' => $user->profile_image_thumb,
             'profile_image_cover' => $user->profile_image,
             'creation_date' => $user->created_at->toDateTimeString(),
             'temperature_is_celsius' => $user->temperature_is_celsius,

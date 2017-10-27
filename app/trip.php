@@ -12,6 +12,7 @@ class trip extends Model
         'user_id',
         'name',
         'start_date',
+        'end_date',
         'total_km',
         'cover_photo_path',
         'likes',

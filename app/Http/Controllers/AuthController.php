@@ -8,9 +8,10 @@ use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Validator;
 use DB, Hash, Mail;
+use Response;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Mail\Message;
-
+use App\ImageSave;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -21,50 +22,84 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
         ];
-        $input = $request->only(
-            'first_name',
-            'name',
-            'email',
-            'password',
-            'city',
-            'country',
-            'password_confirmation'
-        );
-        $validator = Validator::make($input, $rules);
+        $validation = [
+            'first_name'=> $request->get('first_name'),
+            'name'=> $request->get('name'),
+            'email'=> $request->get('email'),
+            'password'=> $request->get('password'),
+            'password_confirmation' => $request->get('password_confirmation')
+        ];
+        $validator = Validator::make($validation, $rules);
         if ($validator->fails()) {
-            $error = $validator->messages()->toJson();
+            $error = $validator->messages();
             return response()->json(['success' => false, 'error' => $error]);
         }
-        $first_name = $request->first_name;
-        $name = $request->name;
-        $email = $request->email;
-        $password = $request->password;
-        if(!empty($request->time_zone)){
-            $time_zone = $request->time_zone;
-        }else{
-            $time_zone = null;
-        }
-        if(!empty($request->city)){
-        $city = $request->city;
-        }else{
-            $city = null;
-        }
-        if(!empty($request->country)){
-            $country = $request->country;
-        }else{
-            $country = null;
-        }
+        $first_name = $request->get('first_name');
+        $name = $request->get('name');
+        $email = $request->get('email');
+        $password = $request->get('password');
+        $time_zone = $request->get('time_zone', null);
+        $city = $request->get('city', null);
+        $country = $request->get('country', null);
+        DB::beginTransaction();
         $user = User::create(['first_name' => $first_name, 'name' => $name, 'email' => $email, 'city' => $city, 'country'=> $country, 'time_zone'=> $time_zone, 'password' => Hash::make($password)]);
+        if($request->file('profile_image')){
+            $image = $request->file('profile_image');
+            $extension = $image->getClientOriginalExtension();
+            if(!($extension == 'jpg' || $extension == 'png')) {
+                DB::rollBack();
+                return Response::json([
+                    'message' => 'Only upload jpg or png images please'
+                ], 422);
+            }else{
+                $bytes = random_bytes(10);
+                $img_name = bin2hex($bytes);
+                try{
+                    $save = new ImageSave(400,400,'U_' . $user->id . '/profile', $img_name . '.' . $extension, $image );
+                    $save_thumb = new ImageSave(50,50,'U_' . $user->id  . '/profile', $img_name . '_thumb.' . $extension, $image );
+                    $profile_image = $save->saveImage();
+                    $profile_thumb = $save_thumb->saveImage();
+                }catch (Exception $e) {
+                    DB::rollBack();
+                    return Response::json([
+                        'message' => 'something went wrong while trying to upload your picture try again please'
+                    ], 422);
+                }
+            }
+        }else{
+            $profile_image = 'default_profile.jpg';
+            $profile_thumb = 'default_profile_thumb.jpg';
+        }
+        $user->profile_image = $profile_image;
+        $user->profile_image_thumb = $profile_thumb;
+        $image_save = $user->save();
         $verification_code = str_random(30); //Generate verification code
-        DB::table('user_verifications')->insert(['user_id' => $user->id, 'token' => $verification_code]);
+        $verificationinsert = DB::table('user_verifications')->insert(['user_id' => $user->id, 'token' => $verification_code]);
         $subject = "Please verify your email address.";
-        Mail::send('email.verify', ['first_name'=> $first_name,'name' => $name, 'verification_code' => $verification_code],
+        $mailsend = Mail::send('email.verify', ['first_name'=> $first_name,'name' => $name, 'verification_code' => $verification_code],
             function ($mail) use ($email, $name, $subject) {
                 $mail->from(getenv('MAIL_USERNAME'), "Tavlr");
                 $mail->to($email, $name);
                 $mail->subject($subject);
             });
-        return response()->json(['success' => true, 'message' => 'Thanks for signing up! Please check your email to complete your registration.']);
+        if(count(Mail::failures()) > 0 ) {
+            DB::rollBack();
+            foreach(Mail::failures as $email_address) {
+                $failure .= "$email_address,";
+            }
+            return Response::json([
+                'message' => 'There was one or more failures.',
+                'failures' => $failure
+            ], 500);
+        }
+        if(!$user || !$image_save || !$verificationinsert || !$profile_image || !$profile_thumb){
+            DB::rollBack();
+            return Response::json([
+                'message' => 'something went wrong try again later please'
+            ], 500);
+        }
+        DB::commit();
+        return response()->json(['success' => true, 'message' => 'Thanks for signing up! Please check your email to complete your registration.'], 200);
     }
 
     public function verifyUser($verification_code)
@@ -73,19 +108,13 @@ class AuthController extends Controller
         if (!is_null($check)) {
             $user = User::find($check->user_id);
             if ($user->is_verified == 1) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Account already verified..'
-                ]);
+                return redirect('http://127.0.0.1:4200/login?message=is_verified');
             }
             $user->update(['is_verified' => 1]);
             DB::table('user_verifications')->where('token', $verification_code)->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'You have successfully verified your email address.'
-            ]);
+            return redirect('http://127.0.0.1:4200/login?message=succes');
         }
-        return response()->json(['success' => false, 'error' => "Verification code is invalid."]);
+        return redirect('http://127.0.0.1:4200/login?message=invalid');
     }
 
     public function login(Request $request)

@@ -21,8 +21,9 @@ class CreateTripsTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('name');
-            $table->dateTime('start_date');
-            $table->integer('total_km')->nullable();
+            $table->dateTime('start_date')->unique();
+            $table->dateTime('end_date')->nullable();
+            $table->integer('total_km')->nullable()->default(0);
             $table->string('cover_photo_path')->default('defaultcover.jpg');
             $table->integer('likes')->default(0);
             $table->boolean('public')->default(false);

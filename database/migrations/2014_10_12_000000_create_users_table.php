@@ -26,9 +26,9 @@ class CreateUsersTable extends Migration
             $table->string('time_zone')->nullable();
             $table->boolean('unit_is_km')->default(true);
             $table->boolean('temperature_is_celsius')->default(true);
-            $table->string('profile_image')->nullable();
-            $table->string('profile_image_cover')->nullable();
-            $table->string('profile_image_thumb')->nullable();
+            $table->string('profile_image')->nullable()->default('default_profile_image.jpg');
+            $table->string('profile_image_cover')->nullable()->default('default_image_cover.jpg');
+            $table->string('profile_image_thumb')->nullable()->default('default_profile_image_thumb.jpg');
             $table->enum('role',['admin','traveler','demo'])->default('traveler');
             $table->boolean('is_verified')->default(0);
             $table->rememberToken();
