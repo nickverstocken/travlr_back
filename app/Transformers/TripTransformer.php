@@ -19,6 +19,19 @@ class TripTransformer extends TransformerAbstract
     ];
     public function transform(trip $trip)
     {
+
+        if(!isset($trip->likes)){
+            $trip->likes = 0;
+        }
+        if(!isset($trip->cover_photo_path)){
+            $trip->cover_photo_path = '/assets/images/defaul_trip_cover.jpg';
+        }
+        if(!isset($trip->total_km)){
+            $trip->total_km = 0;
+        }
+        if(!isset($trip->privacy)){
+            $trip->privacy = 'followers';
+        }
         return [
             'id' => $trip->id,
             'name' => $trip->name,
@@ -29,7 +42,7 @@ class TripTransformer extends TransformerAbstract
             'creation_time' => $trip->created_at->toDateTimeString(),
             'last_modified' => $trip->updated_at->toDateTimeString(),
             'likes' => $trip->likes,
-            'public' => $trip->public,
+            'privacy' => $trip->privacy,
             'user_id' => $trip->user_id
         ];
     }

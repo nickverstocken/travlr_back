@@ -8,7 +8,7 @@
 // app/Transformers/TripTransformer.php
 
 namespace App\Transformers;
-
+use App;
 use App\stop;
 use League\Fractal\TransformerAbstract;
 
@@ -22,12 +22,13 @@ class StopTransformer extends TransformerAbstract
         return [
             'id' => $stop->id,
             'name' => $stop->name,
-            'descriptio' => $stop->description,
+            'description' => $stop->description ? $stop->description : '',
             'trip_id' => $stop->trip_id,
-            'views' => $stop->views,
-            'likes' => $stop->likes,
+            'views' => $stop->views ? $stop->views : 0,
+            'likes' => $stop->likes ? $stop->likes: 0,
             'arrival_time' => $stop->arrival_time,
             'location' => $stop->location,
+
         ];
     }
     public function includeMedia(stop $stop)

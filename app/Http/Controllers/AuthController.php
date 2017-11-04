@@ -12,6 +12,7 @@ use Response;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Mail\Message;
 use App\ImageSave;
+use Auth;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -55,8 +56,8 @@ class AuthController extends Controller
                 $bytes = random_bytes(10);
                 $img_name = bin2hex($bytes);
                 try{
-                    $save = new ImageSave(400,400,'U_' . $user->id . '/profile', $img_name . '.' . $extension, $image );
-                    $save_thumb = new ImageSave(50,50,'U_' . $user->id  . '/profile', $img_name . '_thumb.' . $extension, $image );
+                    $save = new ImageSave(400,400,'u_' . $user->id . '/profile', $img_name . '.' . $extension, $image );
+                    $save_thumb = new ImageSave(90,90,'u_' . $user->id  . '/profile', $img_name . '_thumb.' . $extension, $image );
                     $profile_image = $save->saveImage();
                     $profile_thumb = $save_thumb->saveImage();
                 }catch (Exception $e) {
@@ -87,16 +88,11 @@ class AuthController extends Controller
             foreach(Mail::failures as $email_address) {
                 $failure .= "$email_address,";
             }
-            return Response::json([
-                'message' => 'There was one or more failures.',
-                'failures' => $failure
-            ], 500);
+            return response()->json(['success' => false, 'error' => $failure]);
         }
-        if(!$user || !$image_save || !$verificationinsert || !$profile_image || !$profile_thumb){
+        if(!$user || !$verificationinsert || !$profile_image || !$profile_thumb){
             DB::rollBack();
-            return Response::json([
-                'message' => 'something went wrong try again later please'
-            ], 500);
+            return response()->json(['success' => false, 'error' => ['error' => 'something went wrong']]);
         }
         DB::commit();
         return response()->json(['success' => true, 'message' => 'Thanks for signing up! Please check your email to complete your registration.'], 200);
@@ -137,14 +133,14 @@ class AuthController extends Controller
         try {
             // attempt to verify the credentials and create a token for the user
             if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['success' => false, 'error' => 'Invalid Credentials. Please make sure you entered the right information and you have verified your email address.'], 401);
+                return response()->json(['success' => false, 'error' => 'Invalid Credentials. Please make sure you entered the right information and you have verified your email address.']);
             }
         } catch (JWTException $e) {
             // something went wrong whilst attempting to encode the token
             return response()->json(['success' => false, 'error' => 'could_not_create_token'], 500);
         }
         // all good so return the token
-        return response()->json(['success' => true, 'data' => ['token' => $token]]);
+        return response()->json(['success' => true, 'data' => ['token' => $token, 'user' => Auth::user()]]);
     }
 
     public function logout(Request $request)

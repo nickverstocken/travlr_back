@@ -24,6 +24,46 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function(){
 });
 Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function() {
     Route::get('logout', 'AuthController@logout');
-    Route::resource('trips', 'TripsController');
+    Route::get('currentUser', [
+        'as' => 'user.showCurrent',
+        'uses' => 'UserController@showCurrent'
+    ]);
+    Route::get('user/{id}', [
+        'as' => 'user.show',
+        'uses' => 'UserController@show'
+    ]);
+    Route::get('trips', [
+        'as' => 'trips.index',
+        'uses' => 'TripsController@index'
+    ]);
+    Route::get('trips/{id}', [
+        'as' => 'trips.show',
+        'uses' => 'TripsController@show'
+    ]);
+    Route::post('trips/{id}', [
+        'as' => 'trips.store',
+        'uses' => 'TripsController@store'
+    ]);
+    Route::post('trips/update/{id}', [
+        'as' => 'trips.update',
+        'uses' => 'TripsController@update'
+    ]);
+    Route::post('trips/cover/{id}', [
+        'as' => 'trips.updateCoverImage',
+        'uses' => 'TripsController@updateCoverImage'
+    ]);
+    Route::delete('trips/{id}', [
+        'as' => 'trips.destroy',
+        'uses' => 'TripsController@destroy'
+    ]);
+    Route::post('trips/{tripid}/stops', [
+        'as' => 'stops.store',
+        'uses' => 'StopController@store'
+    ]);
+    Route::post('/stop/{stopId}/saveImages', [
+        'as' => 'stops.saveImages',
+        'uses' => 'StopController@saveImages'
+    ]);
+    //updateCoverImage
 });
 

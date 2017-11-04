@@ -21,6 +21,7 @@ private $filename;
 private $image;
     public function __construct($width, $height, $folder, $filename, $image)
     {
+
         $this->width = $width;
         $this->height = $height;
         $this->folder = $folder;
@@ -28,9 +29,14 @@ private $image;
         $this->image = $image;
     }
     public function saveImage(){
+
         $image = Image::make($this->image)->fit($this->width, $this->height);
         $image = $image->stream();
         Storage::disk('s3')->put($this->folder . '/' . $this->filename, $image->__toString());
         return Storage::disk('s3')->url($this->folder . '/' . $this->filename);
+    }
+    public function clearFolder($folder){
+       Storage::disk('s3')->deleteDirectory($folder);
+
     }
 }
