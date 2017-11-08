@@ -8,6 +8,7 @@ use App\Http\Transform;
 use League\Fractal\Resource\Item;
 use Response;
 use App\User;
+use League\Fractal\Resource\Collection;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
 use JWTAuth;
@@ -49,6 +50,24 @@ class UserController extends Controller
         }
         return Response::json([
             'data' => $user
+        ], 200);
+    }
+    public function getFollowers($id, Request $request){
+        $user = User::find($id);
+        $followers = $user->followers()->get();
+        $following = $user->following()->get();
+        $count = count($followers);
+        $followers = new Collection($followers, $this->_usertransformer);
+        $following = new Collection($following, $this->_usertransformer);
+        $this->_fractal->parseIncludes($request->get('include', ''));
+        $this->_fractal->parseIncludes($request->get('include', ''));
+        $followers = $this->_fractal->createData($followers);
+        $following = $this->_fractal->createData($following);
+        return Response::json([
+            'success' => true,
+            'followers' => $followers->toArray(),
+            'count' => $count,
+            'following' => $following->toArray()
         ], 200);
     }
 }

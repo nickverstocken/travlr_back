@@ -68,8 +68,8 @@ class AuthController extends Controller
                 }
             }
         }else{
-            $profile_image = 'default_profile.jpg';
-            $profile_thumb = 'default_profile_thumb.jpg';
+            $profile_image = 'assets/images/default_profile_image.jpg';
+            $profile_thumb = 'assets/images/default_profile_image_thumb.jpg';
         }
         $user->profile_image = $profile_image;
         $user->profile_image_thumb = $profile_thumb;

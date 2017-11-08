@@ -9,6 +9,7 @@ use App\stop;
 use App\location;
 use App\Media;
 use App\User;
+use Illuminate\Support\Facades\Storage;
 use League\Fractal\Resource\Item;
 use Mockery\Exception;
 use Response;
@@ -84,6 +85,77 @@ class StopController extends Controller
             'stop' => $stop
         ], 200);
     }
+    }
+    public function update(Request $request, $stopId){
+        $user = JWTAuth::parseToken()->toUser();
+        $stop = stop::findOrFail($stopId);
+        $location = $stop->location()->first();
+        $trip = $stop->trip()->first();
+        if($stop && $trip->user_id == $user->id){
+            if ($request->filled('name')) {
+                $stop->name = $request->get('name');
+            }
+            if ($request->filled('description')) {
+                $stop->description = $request->get('description');
+            }
+            if ($request->filled('arrival_time')){
+                $stop->arrival_time = $request->get('arrival_time');
+            }
+           if ($request->filled('location')){
+               $location->name = $request->get('location');
+           }
+           if( $request->filled('lat')){
+               $location->lat = $request->get('lat');
+           }
+            if( $request->filled('lng')){
+                $location->lng = $request->get('lng');
+            }
+        }
+        DB::beginTransaction();
+        $location->save();
+        $stop->save();
+        DB::Commit();
+        if($stop){
+            $stop = new Item($stop, $this->_stopTransformer);
+            $this->_fractal->parseIncludes('media');
+            $stop = $this->_fractal->createData($stop);
+            $stop = $stop->toArray();
+        }
+        return Response::json([
+            'success' => true,
+            'message' => 'Stop edited Succesfully',
+            'stop' => $stop
+        ], 200);
+    }
+    public function destroy($stopId){
+        $user = JWTAuth::parseToken()->toUser();
+        $stop = stop::find($stopId);
+        $trip = $stop->trip()->first();
+        if($stop && $trip->user_id  == $user->id){
+            $stop->delete();
+            return Response::json([
+                'success' => true,
+                'message' => 'Stop Deleted Succesfully'
+            ], 200);
+        }
+    }
+    public function destroyMedia($mediaId){
+        $user = JWTAuth::parseToken()->toUser();
+        $media = Media::findorfail($mediaId);
+        $trip = $media->stop()->first()->trip()->first();
+        if($media && $trip->user_id  == $user->id){
+            $chunks = array_filter(explode('/', $media->image));
+            $chunks_thumb = array_filter(explode('/', $media->image_thumb));
+            $path = $chunks[4] . '/' . $chunks[5] . '/' . $chunks[6] . '/' . $chunks[7] . '/' . $chunks[8] . '/' . $chunks[9];
+            $path_thumb = $chunks_thumb[4] . '/' . $chunks_thumb[5] . '/' . $chunks_thumb[6] . '/' . $chunks_thumb[7] . '/' . $chunks_thumb[8] . '/' . $chunks_thumb[9];
+            Storage::disk('s3')->delete($path);
+            Storage::disk('s3')->delete($path_thumb);
+            $media->delete();
+            return Response::json([
+                'success' => true,
+                'message' => 'Media Deleted Succesfully'
+            ], 200);
+        }
     }
     public function saveImages(Request $request, $stopId)
     {

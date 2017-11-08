@@ -37,6 +37,8 @@ class UserTransformer extends TransformerAbstract
             'creation_date' => $user->created_at->toDateTimeString(),
             'temperature_is_celsius' => $user->temperature_is_celsius,
             'unit_is_km' => $user->unit_is_km,
+            'followers_count' => count($user->followers),
+            'following_count' => count($user->following)
         ];
     }
     public function includetrips(User $user, ParamBag $paramBag)

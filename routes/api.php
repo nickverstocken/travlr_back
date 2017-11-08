@@ -32,6 +32,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'user.show',
         'uses' => 'UserController@show'
     ]);
+    Route::get('user/{id}/getfollowers', [
+        'as' => 'user.getFollowers',
+        'uses' => 'UserController@getFollowers'
+    ]);
     Route::get('trips', [
         'as' => 'trips.index',
         'uses' => 'TripsController@index'
@@ -40,7 +44,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'trips.show',
         'uses' => 'TripsController@show'
     ]);
-    Route::post('trips/{id}', [
+    Route::post('trips', [
         'as' => 'trips.store',
         'uses' => 'TripsController@store'
     ]);
@@ -60,9 +64,21 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'stops.store',
         'uses' => 'StopController@store'
     ]);
+    Route::post('stop/{stopId}', [
+        'as' => 'stops.update',
+        'uses' => 'StopController@update'
+    ]);
+    Route::delete('stop/{stopId}', [
+        'as' => 'stops.destroy',
+        'uses' => 'StopController@destroy'
+    ]);
     Route::post('/stop/{stopId}/saveImages', [
         'as' => 'stops.saveImages',
         'uses' => 'StopController@saveImages'
+    ]);
+    Route::delete('media/{mediaId}', [
+        'as' => 'media.destroy',
+        'uses' => 'StopController@destroyMedia'
     ]);
     //updateCoverImage
 });
