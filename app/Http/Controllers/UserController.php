@@ -70,4 +70,25 @@ class UserController extends Controller
             'following' => $following->toArray()
         ], 200);
     }
+    public function followUser($userid, Request $request){
+        $user = JWTAuth::parseToken()->toUser();
+        $user2 = User::find($userid);
+        $user->following()->save($user2);
+        return Response::json([
+            'success' => true,
+            'message' => 'succesfully followed user',
+            'user' => $user2
+        ], 200);
+    }
+    public function unfollowUser($userid, Request $request){
+        $user = JWTAuth::parseToken()->toUser();
+        $user2 = User::find($userid);
+        $user->following()->detach($user2);
+        return Response::json([
+            'success' => true,
+            'message' => 'succesfully unfollowed user',
+            'user' => $user2
+        ], 200);
+    }
+
 }

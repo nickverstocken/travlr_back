@@ -48,7 +48,7 @@ class TripsController extends Controller
                 ]
             ], 404);
         }
-        if($trip && $trip->user_id == $user->id || $trip->privacy == 'public'){
+        if($trip && $trip->user_id == $user->id || $trip->privacy == 'public' || $trip->privacy == 'followers'){
             $trip = new Item($trip, $this->_triptransformer);
             $this->_fractal->parseIncludes($request->get('include', ''));
             $trip = $this->_fractal->createData($trip);

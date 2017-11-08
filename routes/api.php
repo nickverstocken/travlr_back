@@ -36,6 +36,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'user.getFollowers',
         'uses' => 'UserController@getFollowers'
     ]);
+    Route::post('user/{userid}/follow/', [
+        'as' => 'user.followUser',
+        'uses' => 'UserController@followUser'
+    ]);
+    Route::post('user/{userid}/unfollow/', [
+        'as' => 'user.unfollowUser',
+        'uses' => 'UserController@unfollowUser'
+    ]);
     Route::get('trips', [
         'as' => 'trips.index',
         'uses' => 'TripsController@index'
