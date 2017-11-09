@@ -11,7 +11,6 @@ use App\Media;
 use App\User;
 use Illuminate\Support\Facades\Storage;
 use League\Fractal\Resource\Item;
-use Mockery\Exception;
 use Response;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Manager;

@@ -25,4 +25,5 @@ class trip extends Model
     public function stops(){
         return $this->hasMany('App\stop');
     }
+
 }

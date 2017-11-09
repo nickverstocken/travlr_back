@@ -28,6 +28,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'user.showCurrent',
         'uses' => 'UserController@showCurrent'
     ]);
+    Route::get('users', [
+        'as' => 'user.index',
+        'uses' => 'UserController@index'
+    ]);
     Route::get('user/{id}', [
         'as' => 'user.show',
         'uses' => 'UserController@show'
@@ -87,6 +91,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
     Route::delete('media/{mediaId}', [
         'as' => 'media.destroy',
         'uses' => 'StopController@destroyMedia'
+    ]);
+    Route::post('media/like/{id}', [
+        'as' => 'media.like',
+        'uses' => 'LikeController@likeMedia'
+    ]);
+    Route::post('stop/like/{id}', [
+        'as' => 'stops.like',
+        'uses' => 'LikeController@likeStop'
     ]);
     //updateCoverImage
 });

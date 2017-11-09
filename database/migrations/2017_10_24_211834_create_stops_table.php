@@ -28,7 +28,6 @@ class CreateStopsTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->integer('views')->default(0);
-            $table->integer('likes')->default(0);
             $table->dateTime('arrival_time');
             $table->softDeletes();
             $table->timestamps();

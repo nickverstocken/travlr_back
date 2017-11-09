@@ -11,6 +11,7 @@ use App\User;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
+use League\Fractal\Pagination\Cursor;
 use JWTAuth;
 class UserController extends Controller
 {
@@ -21,6 +22,40 @@ class UserController extends Controller
         $this->_fractal = $fractal;
         $this->_fractal->setSerializer(new ArraySerializer());
         $this->_usertransformer = $userTransformer;
+    }
+    public function index(Request $request){
+        $currentCursor = $request->input('cursor', null);
+        $previousCursor = $request->input('previous', null);
+        $search_term = $request->input('search');
+        $limit = $request->input('limit', 10);
+        $users = User::where('email', 'LIKE', "%$search_term%")
+            ->orWhere('first_name', 'LIKE', "%$search_term%")
+            ->orWhere('name', 'LIKE', "%$search_term%");
+
+        if ($currentCursor) {
+            $users = $users->having('users.id', '>', $currentCursor)->take($limit)->get();
+        } else {
+            $users = $users->take($limit)->get();
+        }
+        if(!$users->count() > 0){
+            return Response::json([
+                    'success' => true,
+                    'user' => []
+                ]
+                , 200);
+        }
+        $newCursor = $users->last()->id;
+        $cursor = new Cursor($currentCursor, $previousCursor, $newCursor, $users->count());
+        $users = new Collection($users, $this->_usertransformer);
+        $this->_fractal->parseIncludes($request->get('include', ''));
+        $users = $users->setCursor($cursor);
+        $users = $this->_fractal->createData($users);
+        return Response::json([
+                'success' => true,
+                'user' => $users->toArray()
+            ]
+            , 200);
+
     }
     public function showCurrent(Request $request){
         $user = JWTAuth::parseToken()->toUser();

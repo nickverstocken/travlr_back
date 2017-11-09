@@ -29,5 +29,10 @@ class stop extends Model
     public function location(){
         return $this->belongsTo('App\location', 'location_id');
     }
+    public function likes()
+    {
+        return $this->morphToMany('App\User', 'like')->where('likes.deleted_at',null);
+    }
+
 
 }

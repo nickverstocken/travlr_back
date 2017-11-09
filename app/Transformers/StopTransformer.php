@@ -15,7 +15,7 @@ use League\Fractal\TransformerAbstract;
 class StopTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'media'
+        'media', 'likes'
     ];
     public function transform(stop $stop)
     {
@@ -25,7 +25,7 @@ class StopTransformer extends TransformerAbstract
             'description' => $stop->description ? $stop->description : '',
             'trip_id' => $stop->trip_id,
             'views' => $stop->views ? $stop->views : 0,
-            'likes' => $stop->likes ? $stop->likes: 0,
+            'like_count' => $stop->likes->count(),
             'arrival_time' => $stop->arrival_time,
             'location' => $stop->location,
 
@@ -37,5 +37,11 @@ class StopTransformer extends TransformerAbstract
             return null;
         }
         return $this->collection($stop->media, App::make(MediaTransformer::class));
+    }
+    public function includeLikes(stop $stop){
+        if(!$stop->likes){
+            return null;
+        }
+        return $this->collection($stop->likes, App::make(UserTransformer::class));
     }
 }
