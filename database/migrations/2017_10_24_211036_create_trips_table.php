@@ -24,7 +24,7 @@ class CreateTripsTable extends Migration
             $table->dateTime('start_date')->unique();
             $table->dateTime('end_date')->nullable();
             $table->integer('total_km')->nullable()->default(0);
-            $table->string('cover_photo_path')->default('/assets/images/defaul_trip_cover.jpg');
+            $table->string('cover_photo_path')->default('./assets/images/defaul_trip_cover.jpg');
             $table->integer('likes')->default(0);
             $table->enum('privacy',['public','private','followers'])->default('followers');
             $table->softDeletes();
