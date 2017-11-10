@@ -35,7 +35,7 @@ class CommentController extends Controller
         $this->_fractal->parseIncludes($request->get('include', 'user'));
         $comments = $this->_fractal->createData($comments);
         return Response::json([
-                'trips' => $comments->toArray()
+                'comments' => $comments->toArray()
             ]
             , 200);
     }
@@ -66,7 +66,7 @@ class CommentController extends Controller
         return Response::json([
             'success' => true,
             'message' => 'Comment Created Succesfully',
-            'stop' => $comment
+            'comment' => $comment
         ], 200);
     }
 }

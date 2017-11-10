@@ -20,7 +20,8 @@ class CommentTransformer extends TransformerAbstract
         return [
             'id' => $comment->id,
             'media_id' => $comment->media_id,
-            'comment' => $comment->comment
+            'comment' => $comment->comment,
+            'date' => $comment->created_at->toDateTimeString()
         ];
     }
     public function includeUser(Comment $comment)
