@@ -63,7 +63,7 @@ class StopController extends Controller
         $location->lng = $request->get('lng');
         $stop->arrival_time = $request->get('arrival_time');
         if($request->get('description')){
-            $stop->description = $request->get('description');
+            $stop->description = $request->get('description', null);
         }
         if($request->get('location')){
             $location->name = $request->get('location');
@@ -74,7 +74,7 @@ class StopController extends Controller
 
         if($stop){
             $stop = new Item($stop, $this->_stopTransformer);
-            $this->_fractal->parseIncludes('media');
+            $this->_fractal->parseIncludes(['media', 'likes']);
             $stop = $this->_fractal->createData($stop);
             $stop = $stop->toArray();
         }

@@ -69,4 +69,16 @@ class CommentController extends Controller
             'comment' => $comment
         ], 200);
     }
+    public function destroy($id){
+        $user = JWTAuth::parseToken()->toUser();
+        $comment = Comment::findOrFail($id);
+        $trip = $comment->media->stop->trip;
+        if($trip->user_id == $user->id || $comment->user_id == $user->id ){
+            $comment->delete();
+            return Response::json([
+                'success' => true,
+                'message' => 'Comment Deleted Succesfully'
+            ], 200);
+        }
+    }
 }

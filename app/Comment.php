@@ -14,7 +14,7 @@ class Comment extends Model
     public function user(){
         return $this->belongsTo('App\User', 'user_id');
     }
-    public function stops(){
+    public function media(){
         return $this->belongsTo('App\Media', 'media_id');
     }
 }

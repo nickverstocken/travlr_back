@@ -112,6 +112,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'comments.store',
         'uses' => 'CommentController@store'
     ]);
+    Route::delete('comment/{id}', [
+        'as' => 'comments.destroy',
+        'uses' => 'CommentController@destroy'
+    ]);
     //updateCoverImage
 });
 
