@@ -47,6 +47,9 @@ class User extends Authenticatable
     public function trips(){
         return $this->hasMany('App\trip');
     }
+    public function comments(){
+        return $this->hasMany('App\Comment');
+    }
     public function followers()
     {
         return $this->belongsToMany(

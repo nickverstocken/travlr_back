@@ -100,6 +100,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'stops.like',
         'uses' => 'LikeController@likeStop'
     ]);
+    Route::get('comment/{mediaid}', [
+        'as' => 'comments.store',
+        'uses' => 'CommentController@index'
+    ]);
+    Route::post('comment/{mediaid}', [
+        'as' => 'comments.store',
+        'uses' => 'CommentController@store'
+    ]);
     //updateCoverImage
 });
 

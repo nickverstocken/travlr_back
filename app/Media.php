@@ -20,6 +20,9 @@ class Media extends Model
     public function stop(){
         return $this->belongsTo('App\stop', 'stop_id');
     }
+    public function comments(){
+        return $this->hasMany('App\Comment');
+    }
     public function likes()
     {
         return $this->morphToMany('App\User', 'like')->where('likes.deleted_at',null);;
