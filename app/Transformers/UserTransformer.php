@@ -23,7 +23,7 @@ class UserTransformer extends TransformerAbstract
 
         return [
             'id' => $user->id,
-            'last_name' => $user->name,
+            'name' => $user->name,
             'first_name' => $user->first_name,
             'email' => $user->email,
             'fb_id' => $user->fb_id,

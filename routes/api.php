@@ -36,6 +36,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt.auth', 'cors']], function(
         'as' => 'user.show',
         'uses' => 'UserController@show'
     ]);
+    Route::post('user/update', [
+        'as' => 'user.update',
+        'uses' => 'UserController@update'
+    ]);
     Route::get('user/{id}/getfollowers', [
         'as' => 'user.getFollowers',
         'uses' => 'UserController@getFollowers'
