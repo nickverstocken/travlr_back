@@ -90,6 +90,7 @@ class TripsController extends Controller
         if($request->get('end_date')){
             $trip->end_date = $request->get('end_date');
         }
+        $trip->privacy = $request->get('privacy');
         if($request->file('image_cover')) {
             $image = $request->file('image_cover');
             $extension = $image->getClientOriginalExtension();
@@ -124,7 +125,7 @@ class TripsController extends Controller
         $user = JWTAuth::parseToken()->toUser();
         $trip = trip::find($id);
        if($trip->user_id == $user->id){
-           $trip->delete();
+           $trip->forcedelete();
            return Response::json([
                'success' => true,
                'message' => 'Trip Deleted Succesfully'

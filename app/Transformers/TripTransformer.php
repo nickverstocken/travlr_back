@@ -58,6 +58,6 @@ class TripTransformer extends TransformerAbstract
         if(!$trip->stops){
             return null;
         }
-        return $this->collection($trip->stops, App::make(StopTransformer::class));
+        return $this->collection($trip->stops()->orderBy('arrival_time', 'asc')->get(), App::make(StopTransformer::class));
     }
 }
