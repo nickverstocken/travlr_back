@@ -177,8 +177,8 @@ class StopController extends Controller
                     $bytes = random_bytes(10);
                     $img_name = bin2hex($bytes);
                     $folder = 'u_' . $user->id . '/trips/'. $trip->id .'/stops/' . $stopId;
-                    $save = new ImageSave(1000, 600, $folder, $img_name . '.' . $extension, $files[$index]);
-                    $save_thumb = new ImageSave(100, 60, $folder, $img_name . '_thumb.' . $extension, $files[$index]);
+                    $save = new ImageSave(800, 600, $folder, $img_name . '.' . $extension, $files[$index]);
+                    $save_thumb = new ImageSave(80, 60, $folder, $img_name . '_thumb.' . $extension, $files[$index]);
                     $media = new Media();
                     $media->image = $save->saveImage();
                     $media->image_thumb = $save_thumb->saveImage();
